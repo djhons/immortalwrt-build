@@ -1,4 +1,4 @@
-name: Build ImmortalWrt
+name: Build ImmortalWrt for abt_asr3000 with Passwall
 
 on:
   workflow_dispatch:
@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    timeout-minutes: 120
 
     steps:
     - name: 安装依赖
@@ -15,7 +16,7 @@ jobs:
           gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
           python3-distutils rsync unzip zlib1g-dev file wget
 
-    - name: 克隆源码
+    - name: 克隆 ImmortalWrt 源码
       run: |
         git clone https://github.com/immortalwrt/immortalwrt.git openwrt
         cd openwrt
@@ -31,20 +32,24 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: 配置构建参数
+    - name: 加载编译配置文件
       run: |
         cd openwrt
-        curl -L -o .config https://raw.githubusercontent.com/你的用户名/你的仓库名/main/mt7981.config
+        curl -L -o .config https://raw.githubusercontent.com/djhons/immortalwrt-build/main/mt7981.config
         make defconfig
 
-    - name: 开始编译
+    - name: 下载所有依赖包
       run: |
         cd openwrt
         make download -j$(nproc) || true
+
+    - name: 编译固件
+      run: |
+        cd openwrt
         make -j$(nproc) || make -j1 V=s
 
-    - name: 上传固件
-      uses: actions/upload-artifact@v3
+    - name: 上传固件产物
+      uses: actions/upload-artifact@v4
       with:
         name: firmware
         path: openwrt/bin/targets/
