@@ -37,10 +37,28 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: ⚙️ 加载 .config 编译配置
+    
+    - name: 🛠️ 修改默认设置
       run: |
         cd openwrt
-        curl -L -o .config https://raw.githubusercontent.com/djhons/immortalwrt-build/main/mt7981.c
+        sed -i 's/192.168.1.1/192.168.33.1/g' package/base-files/files/bin/config_generate
+        echo '
+          uci set wireless.@wifi-iface[0].ssid="djhons"
+          uci set wireless.@wifi-iface[0].encryption="psk2"
+          uci set wireless.@wifi-iface[0].key="djhons123"
+          uci set system.@system[0].hostname="djhons-router"
+          uci set luci.main.mediaurlbase="/luci-static/bootstrap"
+          uci set fstab.@global[0].anon_mount="1"
+          uci set fstab.@global[0].auto_swap="1"
+          uci commit
+          echo "root:djhons123" | chpasswd
+        ' > files/etc/uci-defaults/99-custom-settings
+        chmod +x files/etc/uci-defaults/99-custom-settings
+
+- name: ⚙️ 加载 .config 编译配置
+      run: |
+        cd openwrt
+        curl -L -o .config https://raw.githubusercontent.com/djhons/immortalwrt-build/main/mt7981.config
         make defconfig
 
     - name: 📦 下载依赖
