@@ -8,20 +8,19 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout Repo
+    - name: 🧾 Checkout Repo
       uses: actions/checkout@v4
 
-    - name: Build ImmortalWrt
+    - name: ⚙️ Build ImmortalWrt
       uses: hominsu/immortalwrt-builder-action@v1.0.4
       with:
-        target: "mediatek"
-        subtarget: "filogic"
-        profile: "abt_asr3000"
+        target: mediatek
+        subtarget: filogic
+        profile: abt_asr3000
+        default_ip: 192.168.33.1
+        wifi_name: djhons
+        wifi_password: djhons123
+        login_password: djhons123
         feeds_conf: |
           src-git passwall https://github.com/xiaorouji/openwrt-passwall
           src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages
-        custom_files: "./files"
-        default_ip: "192.168.33.1"
-        wifi_name: "djhons"
-        wifi_password: "djhons123"
-        login_password: "djhons123"
