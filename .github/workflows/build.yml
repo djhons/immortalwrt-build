@@ -68,7 +68,7 @@ jobs:
     - name: 🏗️ 编译固件
       run: |
         cd openwrt
-        make -j$(nproc) V=s
+        make -j1 V=s
 
     - name: 📤 上传固件产物
       uses: actions/upload-artifact@v4
