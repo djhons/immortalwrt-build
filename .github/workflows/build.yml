@@ -63,7 +63,7 @@ jobs:
     - name: 📦 下载依赖
       run: |
         cd openwrt
-        make download -j$(nproc) || true
+        make download -j1
 
     - name: 🏗️ 编译固件
       run: |
